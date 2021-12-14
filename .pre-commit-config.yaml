@@ -7,13 +7,11 @@ repos:
     -   id: check-json
     -   id: check-yaml
         exclude: ^docs/
-    -   id: no-commit-to-branch
-        args: [--branch, main, --branch, development]
 -   repo: git@github.com:humitos/mirrors-autoflake.git
     rev: v1.3
     hooks:
     -   id: autoflake
-        args: ['--in-place', '--remove-all-unused-imports', '--exclude', '*/migrations/*']
+        args: ['--in-place', '--remove-all-unused-imports']
 -   repo: https://github.com/PyCQA/flake8
     rev: 3.9.2
     hooks:
