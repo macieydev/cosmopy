@@ -20,7 +20,6 @@ if __name__ == "__main__":
     passat = Car(make="VW", model="Passat")
     print(f"Car: {passat}")
     passat.save()
-    print(f"Car (with id): {passat}")
 
     passat.model = "Golf"
     golf = passat.save()

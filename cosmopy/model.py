@@ -110,6 +110,10 @@ def uuid_factory():
     return str(uuid.uuid4())
 
 
+class Queryset:
+    pass
+
+
 class CosmosModel(PydanticModel, metaclass=Metaclass):
     id: str = Field(default_factory=uuid_factory)
     rid: Optional[str] = Field(None, alias="_rid")
@@ -142,6 +146,7 @@ class CosmosModel(PydanticModel, metaclass=Metaclass):
     @classmethod
     @class_connection
     def all(cls):
+        # TODO: should return queryset
         results = cls.Meta.container.read_all_items()
         results = list(results)
         return list(cls(**r) for r in results)
@@ -172,6 +177,7 @@ class CosmosModel(PydanticModel, metaclass=Metaclass):
     @classmethod
     @class_connection
     def query(cls, **kwargs):
+        # TODO: should return queryset
         params = cls.__parse_to_dot_notation(kwargs)
         params = cls.__format_for_str_values(params)
         params_str = cls.__prepare_params_str(params)
