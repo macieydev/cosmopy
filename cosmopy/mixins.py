@@ -1,8 +1,9 @@
-from azure.cosmos import partition_key
-from azure.cosmos.cosmos_client import CosmosClient
 import os
+
 import azure.cosmos.documents as documents
-from .exceptions import TooManyObjectsFound, NoObjectFound
+from azure.cosmos.cosmos_client import CosmosClient
+
+from .exceptions import NoObjectFound, TooManyObjectsFound
 
 
 class CosmosContainer:
@@ -16,9 +17,7 @@ class CosmosContainer:
         client = CosmosClient.from_connection_string(
             os.environ["COSMOS_DB_CONNECTION_STRING"]
         )
-        database = client.create_database_if_not_exists(
-            os.environ["COSMOS_DB_NAME"]
-        )
+        database = client.create_database_if_not_exists(os.environ["COSMOS_DB_NAME"])
         partition_key = getattr(owner, "_partition_key")
         self.cached_container = database.create_container_if_not_exists(
             getattr(owner, "_container_name", owner.__name__),
@@ -65,7 +64,7 @@ class ManagableDocumentMixin:
         params = cls.__parse_to_dot_notation(kwargs)
         params = cls.__format_for_str_values(params)
         params_str = cls.__prepare_params_str(params)
-        
+
         query_str = f"SELECT * FROM c WHERE {params_str}"
 
         results = cls._container.query_items(
@@ -95,13 +94,11 @@ class ManagableDocumentMixin:
 
     @staticmethod
     def __parse_to_dot_notation(params):
-        return {
-            key.replace('__', '.'): params[key] for key in params
-        }
+        return {key.replace("__", "."): params[key] for key in params}
 
     @staticmethod
     def __format_for_str_values(params):
         for key in params:
             if isinstance(params[key], str):
-                params[key] = f"\"{params[key]}\""
+                params[key] = f'"{params[key]}"'
         return params

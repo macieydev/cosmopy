@@ -1,8 +1,10 @@
-from typing import Any, List, Optional, Tuple
 import uuid
+from typing import Any, List, Optional, Tuple
+
 from pydantic import BaseModel
 from pydantic.fields import Field
-from cosmopy.mixins import ManagableDocumentMixin, CosmosContainer
+
+from cosmopy.mixins import CosmosContainer, ManagableDocumentMixin
 
 
 def uuid4_factory():
@@ -50,6 +52,7 @@ class SUV(Car):
     _container_name = "suvs"
     _container = CosmosContainer()
 
+
 class Bike(CosmosBaseModel):
     model: str
     make: str
@@ -59,19 +62,17 @@ class Bike(CosmosBaseModel):
 
 
 if __name__ == "__main__":
-    car = Car(
-        model="VW", 
-        make="Golf", 
-        engine=Engine(
-            hp=100, 
-            vol=1600
-        )
-    )
+    car = Car(model="VW", make="Golf", engine=Engine(hp=100, vol=1600))
     car.save()
     _id = car.id
     car = Car.get(id=_id)
     print(car)
-    suv = SUV(model="Santa fe", make="Hyundai", engine=Engine(hp=115, vol=2000), four_wheels_drive=True)
+    suv = SUV(
+        model="Santa fe",
+        make="Hyundai",
+        engine=Engine(hp=115, vol=2000),
+        four_wheels_drive=True,
+    )
     suv.save()
     bikes = Bike.all()
     print(bikes)

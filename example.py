@@ -1,8 +1,8 @@
-from re import I
 from typing import Optional
-from azure.cosmos.exceptions import CosmosResourceNotFoundError
-from cosmopy.model import CosmosModel
+
 from pydantic import BaseModel
+
+from cosmopy.model import CosmosModel
 
 
 class Engine(BaseModel):

@@ -1,15 +1,15 @@
 import os
 import uuid
-from typing import Any, Dict, List, Optional, Tuple, Union
-from azure.cosmos import partition_key
+from typing import Any, List, Optional, Tuple
 
 import azure.cosmos.documents as documents
-from azure.cosmos.cosmos_client import CosmosClient, DatabaseProxy
 from azure.cosmos.container import ContainerProxy
+from azure.cosmos.cosmos_client import CosmosClient, DatabaseProxy
+from pydantic import Field
 from pydantic.main import BaseModel as PydanticModel
 from pydantic.main import ModelMetaclass as PydanticMetaclass
-from pydantic import Field
-from .exceptions import TooManyObjectsFound, NoObjectFound
+
+from .exceptions import NoObjectFound, TooManyObjectsFound
 
 
 def get_client(obj):
@@ -142,7 +142,7 @@ class CosmosModel(PydanticModel, metaclass=Metaclass):
         upserted = self._meta.container.upsert_item(self.dict(by_alias=True))
         self.parse_obj(upserted)
         return self
-        
+
     @classmethod
     @class_connection
     def all(cls):
@@ -157,7 +157,7 @@ class CosmosModel(PydanticModel, metaclass=Metaclass):
         params = cls.__parse_to_dot_notation(kwargs)
         params = cls.__format_for_str_values(params)
         params_str = cls.__prepare_params_str(params)
-        
+
         query_str = f"SELECT * FROM c WHERE {params_str}"
 
         results = cls.Meta.container.query_items(
@@ -197,15 +197,13 @@ class CosmosModel(PydanticModel, metaclass=Metaclass):
 
     @staticmethod
     def __parse_to_dot_notation(params):
-        return {
-            key.replace('__', '.'): params[key] for key in params
-        }
+        return {key.replace("__", "."): params[key] for key in params}
 
     @staticmethod
     def __format_for_str_values(params):
         for key in params:
             if isinstance(params[key], str):
-                params[key] = f"\"{params[key]}\""
+                params[key] = f'"{params[key]}"'
         return params
 
     @instance_connection
